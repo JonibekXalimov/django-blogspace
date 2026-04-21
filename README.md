@@ -1,4 +1,4 @@
-# Jonibek's Blog
+# Blog Site
 
 Zamonaviy va soddalashtirilgan Django blog/news sayti. Loyiha foydalanuvchiga maqolalarni o'qish, bo'limlar bo'yicha ko'rish, qidirish va izoh qoldirish imkonini beradi. Interfeys real kontentga yo'naltirilgan bo'lib, bosh sahifa va maqola sahifalari yangiliklar sayti uslubida qurilgan.
 
