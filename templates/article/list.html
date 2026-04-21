@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %}Maqolalar | BlogSpace{% endblock title %}
+
+{% block content %}
+<section class="page-heading">
+    <div>
+        <span class="eyebrow">Maqolalar</span>
+        <h1>So'nggi maqolalar</h1>
+        <p>Blogdagi barcha yozuvlar bir joyda jamlangan.</p>
+    </div>
+    {% if user.is_authenticated and user.is_superuser %}
+        <a href="{% url 'create' %}" class="button button-primary">Yangi post</a>
+    {% endif %}
+</section>
+
+<section class="toolbar-card">
+    <div class="category-bar">
+        <div class="category-strip">
+            <a href="{% url 'list' %}" class="category-chip {% if not selected_category %}is-active{% endif %}">Barchasi</a>
+            {% for key, label in category_choices %}
+                <a href="{% url 'list' %}?category={{ key }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="category-chip {% if selected_category == key %}is-active{% endif %}">{{ label }}</a>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="toolbar-meta">
+        <span>{{ object_list|length }} ta maqola</span>
+        <span>{% if selected_category_label %}Tanlangan bo'lim: {{ selected_category_label }}{% else %}Barcha bo'limlar{% endif %}</span>
+    </div>
+</section>
+
+{% if object_list %}
+    <div class="news-search-scope" data-search-list="articles">
+        {% if featured_article %}
+            <section class="list-top-grid">
+                <article class="lead-story" data-search-item data-search-text="{{ featured_article.title }} {{ featured_article.summary }} {{ featured_article.author }}">
+                    <a href="{% url 'detail' featured_article.pk %}" class="lead-story-media">
+                        {% if featured_article.photo %}
+                            <img src="{{ featured_article.photo.url }}" alt="{{ featured_article.title }}">
+                        {% else %}
+                            <div class="lead-placeholder"></div>
+                        {% endif %}
+                    </a>
+                    <div class="lead-story-body">
+                        <div class="story-meta">
+                            <span class="category-badge">{{ featured_article.get_category_display }}</span>
+                            <span class="story-kicker">Asosiy maqola</span>
+                            <span>{{ featured_article.date|date:"d M Y" }}</span>
+                        </div>
+                        <h2><a href="{% url 'detail' featured_article.pk %}">{{ featured_article.title }}</a></h2>
+                        <p>{{ featured_article.summary|default:featured_article.body|striptags|truncatewords:28 }}</p>
+                        <a href="{% url 'detail' featured_article.pk %}" class="text-link">Batafsil o'qish</a>
+                    </div>
+                </article>
+
+                <aside class="headline-panel">
+                    <div class="section-head">
+                        <h2>Yangi qo'shilganlar</h2>
+                    </div>
+                    <div class="story-list">
+                        {% for article in headline_articles %}
+                            <article class="headline-item" data-search-item data-search-text="{{ article.title }} {{ article.summary }} {{ article.author }}">
+                                <div class="story-meta">
+                                    <span class="category-badge">{{ article.get_category_display }}</span>
+                                    <span>{{ article.author|title }}</span>
+                                    <span>{{ article.date|date:"d M Y" }}</span>
+                                </div>
+                                <h3><a href="{% url 'detail' article.pk %}">{{ article.title }}</a></h3>
+                            </article>
+                        {% empty %}
+                            <div class="empty-inline">
+                                <p>Yangi maqolalar tez orada shu yerda ko'rinadi.</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </aside>
+            </section>
+        {% endif %}
+
+        <section class="news-card-grid">
+            {% for article in remaining_articles %}
+                <article class="story-card" data-search-item data-search-text="{{ article.title }} {{ article.summary }} {{ article.author }}">
+                    <a href="{% url 'detail' article.pk %}" class="story-card-media">
+                        {% if article.photo %}
+                            <img src="{{ article.photo.url }}" alt="{{ article.title }}">
+                        {% else %}
+                            <div class="lead-placeholder"></div>
+                        {% endif %}
+                    </a>
+                    <div class="story-card-body">
+                        <div class="story-meta">
+                            <span class="category-badge">{{ article.get_category_display }}</span>
+                            <span>{{ article.author|title }}</span>
+                            <span>{{ article.date|date:"d M Y" }}</span>
+                        </div>
+                        <h3><a href="{% url 'detail' article.pk %}">{{ article.title }}</a></h3>
+                        <p>{{ article.summary|default:article.body|striptags|truncatewords:18 }}</p>
+                    </div>
+                </article>
+            {% endfor %}
+        </section>
+    </div>
+
+    <div class="empty-state is-hidden" data-search-empty="articles">
+        <h3>Natija topilmadi</h3>
+        <p>Qidiruv so'zini o'zgartirib ko'ring yoki barcha maqolalarni qayta ko'rsating.</p>
+    </div>
+{% else %}
+    <section class="empty-state">
+        <h2>Hozircha maqolalar mavjud emas</h2>
+        <p>Yangi postlar e'lon qilingach, ular shu sahifada ko'rinadi.</p>
+        {% if user.is_authenticated and user.is_superuser %}
+            <a href="{% url 'create' %}" class="button button-primary">Birinchi postni yaratish</a>
+        {% endif %}
+    </section>
+{% endif %}
+{% endblock content %}

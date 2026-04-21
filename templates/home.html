@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block title %}Bosh sahifa | BlogSpace{% endblock title %}
+
+{% block content %}
+{% if featured_article %}
+    <section class="category-bar">
+        <div class="category-strip">
+            {% for key, label in category_choices %}
+                <a href="{% url 'list' %}?category={{ key }}" class="category-chip">{{ label }}</a>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="home-news-grid">
+        <article class="lead-story">
+            <a href="{% url 'detail' featured_article.pk %}" class="lead-story-media">
+                {% if featured_article.photo %}
+                    <img src="{{ featured_article.photo.url }}" alt="{{ featured_article.title }}">
+                {% else %}
+                    <div class="lead-placeholder"></div>
+                {% endif %}
+            </a>
+            <div class="lead-story-body">
+                <div class="story-meta">
+                    <span class="category-badge">{{ featured_article.get_category_display }}</span>
+                    <span class="story-kicker">Asosiy maqola</span>
+                    <span>{{ featured_article.date|date:"d M Y, H:i" }}</span>
+                </div>
+                <h1><a href="{% url 'detail' featured_article.pk %}">{{ featured_article.title }}</a></h1>
+                <p>{{ featured_article.summary|default:featured_article.body|striptags|truncatewords:34 }}</p>
+                <a href="{% url 'detail' featured_article.pk %}" class="text-link">To'liq o'qish</a>
+            </div>
+        </article>
+
+        <aside class="headline-panel">
+            <div class="section-head">
+                <h2>So'nggi maqolalar</h2>
+                <a href="{% url 'list' %}" class="text-link">Barchasi</a>
+            </div>
+            <div class="story-list">
+                {% for article in sidebar_articles %}
+                    <article class="headline-item">
+                        <div class="story-meta">
+                            <span class="category-badge">{{ article.get_category_display }}</span>
+                            <span>{{ article.author|title }}</span>
+                            <span>{{ article.date|date:"d M Y" }}</span>
+                        </div>
+                        <h3><a href="{% url 'detail' article.pk %}">{{ article.title }}</a></h3>
+                    </article>
+                {% empty %}
+                    <div class="empty-inline">
+                        <p>Yangi maqolalar shu yerda ko'rinadi.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </aside>
+    </section>
+
+    <section class="news-section">
+        <div class="section-head">
+            <h2>Yangi yozuvlar</h2>
+            <a href="{% url 'list' %}" class="text-link">Barcha maqolalar</a>
+        </div>
+        <div class="news-card-grid">
+                {% for article in latest_articles %}
+                    <article class="story-card">
+                    <a href="{% url 'detail' article.pk %}" class="story-card-media">
+                        {% if article.photo %}
+                            <img src="{{ article.photo.url }}" alt="{{ article.title }}">
+                        {% else %}
+                            <div class="lead-placeholder"></div>
+                        {% endif %}
+                    </a>
+                    <div class="story-card-body">
+                        <div class="story-meta">
+                            <span class="category-badge">{{ article.get_category_display }}</span>
+                            <span>{{ article.author|title }}</span>
+                            <span>{{ article.date|date:"d M Y" }}</span>
+                        </div>
+                        <h3><a href="{% url 'detail' article.pk %}">{{ article.title }}</a></h3>
+                        <p>{{ article.summary|default:article.body|striptags|truncatewords:18 }}</p>
+                    </div>
+                </article>
+            {% empty %}
+                <article class="story-card">
+                    <div class="story-card-body">
+                        <h3>Yangi maqolalar kutilmoqda</h3>
+                        <p>Yangi yozuvlar e'lon qilingach, ular shu sahifada chiqadi.</p>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+
+    {% for section in category_sections %}
+        <section class="news-section">
+            <div class="section-head">
+                <h2>{{ section.label }}</h2>
+                <a href="{% url 'list' %}?category={{ section.key }}" class="text-link">Hammasi</a>
+            </div>
+            <div class="news-card-grid">
+                {% for article in section.articles %}
+                    <article class="story-card">
+                        <div class="story-card-body">
+                            <div class="story-meta">
+                                <span class="category-badge">{{ section.label }}</span>
+                                <span>{{ article.date|date:"d M Y" }}</span>
+                            </div>
+                            <h3><a href="{% url 'detail' article.pk %}">{{ article.title }}</a></h3>
+                            <p>{{ article.summary|default:article.body|striptags|truncatewords:18 }}</p>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        </section>
+    {% endfor %}
+{% else %}
+    <section class="empty-state">
+        <h2>Hozircha maqolalar mavjud emas</h2>
+        <p>Yangi yozuvlar e'lon qilingach, ular shu sahifada ko'rinadi.</p>
+    </section>
+{% endif %}
+{% endblock content %}

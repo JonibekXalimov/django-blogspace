@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Yangi post | BlogSpace{% endblock title %}
+
+{% block content %}
+<section class="form-page">
+    <div class="form-page-copy">
+        <span class="eyebrow">Maqola</span>
+        <h1>Yangi post yaratish</h1>
+        <p>Sarlavha, qisqa tavsif va asosiy matnni kiriting.</p>
+    </div>
+
+    <div class="form-panel">
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            {{ form.media }}
+            {% include 'includes/form_fields.html' %}
+            <div class="form-actions">
+                <button class="button button-primary" type="submit">Postni saqlash</button>
+                <a href="{% url 'list' %}" class="button button-secondary">Bekor qilish</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock content %}

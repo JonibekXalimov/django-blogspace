@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Kirish | BlogSpace{% endblock title %}
+
+{% block content %}
+<section class="auth-shell">
+    <div class="auth-copy">
+        <span class="eyebrow">Kirish</span>
+        <h1>Hisobingizga kiring</h1>
+        <p>Davom etish uchun foydalanuvchi nomi va parolingizni kiriting.</p>
+    </div>
+
+    <div class="form-panel auth-panel">
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {% include 'includes/form_fields.html' %}
+            <div class="form-actions">
+                <button class="button button-primary" type="submit">Kirish</button>
+                <a href="{% url 'password_reset' %}" class="button button-secondary">Parolni tiklash</a>
+            </div>
+        </form>
+        <p class="auth-meta">Hisobingiz yo'qmi? <a href="{% url 'signup' %}">Ro'yxatdan o'ting</a>.</p>
+    </div>
+</section>
+{% endblock content %}

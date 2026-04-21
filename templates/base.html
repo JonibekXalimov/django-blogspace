@@ -1,0 +1,125 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}BlogSpace{% endblock title %}</title>
+    <meta name="description" content="Turli mavzulardagi maqolalar va foydali yozuvlar blogi">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/app.css' %}?v=20260421-3">
+    <script>window.CKEDITOR_BASEPATH = '/static/ckeditor/ckeditor/';</script>
+    {% block extrahead %}{% endblock extrahead %}
+</head>
+<body class="{% block body_class %}{% endblock body_class %}">
+    <div class="site-shell">
+        <header class="site-header">
+            <div class="container">
+                <div class="topbar">
+                    <a class="brand" href="{% url 'home' %}">
+                        <span class="brand-mark">J</span>
+                        <span>
+                            <strong>Jonibek's Blog</strong>
+                            <small>Maqolalar va yozuvlar</small>
+                        </span>
+                    </a>
+
+                    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" data-nav-toggle>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+
+                    <nav class="primary-nav" id="primary-nav" data-nav-panel>
+                        <a href="{% url 'home' %}" class="{% if request.path == '/' %}is-active{% endif %}">Bosh sahifa</a>
+                        <a href="{% url 'list' %}" class="{% if '/articles/' in request.path %}is-active{% endif %}">Maqolalar</a>
+                        {% if user.is_authenticated and user.is_superuser %}
+                            <a href="{% url 'create' %}" class="{% if request.path == '/articles/create/' %}is-active{% endif %}">Yangi post</a>
+                        {% endif %}
+                    </nav>
+
+                    <div class="header-tools">
+                        <form action="{% url 'list' %}" method="get" class="header-search">
+                            {% if request.GET.category %}
+                                <input type="hidden" name="category" value="{{ request.GET.category }}">
+                            {% endif %}
+                            <input
+                                type="search"
+                                name="q"
+                                value="{{ request.GET.q }}"
+                                placeholder="Qidiruv..."
+                                aria-label="Maqolalarni qidirish"
+                                data-search-input="articles"
+                            >
+                        </form>
+
+                        <div class="header-actions">
+                            {% if user.is_authenticated %}
+                                <details class="profile-menu">
+                                    <summary>
+                                        <span class="avatar">{{ user.username|slice:":1"|upper }}</span>
+                                        <span>{{ user.username|title }}</span>
+                                    </summary>
+                                    <div class="profile-dropdown">
+                                        {% if user.is_superuser %}
+                                            <a href="{% url 'create' %}">Post yaratish</a>
+                                        {% endif %}
+                                        <a href="{% url 'password_change' %}">Parolni yangilash</a>
+                                        <form action="{% url 'logout' %}" method="post" class="profile-dropdown-form">
+                                            {% csrf_token %}
+                                            <button type="submit" class="profile-dropdown-button">Chiqish</button>
+                                        </form>
+                                    </div>
+                                </details>
+                            {% else %}
+                                <a href="{% url 'login' %}" class="button button-secondary">Kirish</a>
+                                <a href="{% url 'signup' %}" class="button button-primary">Ro'yxatdan o'tish</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="page-main">
+            <div class="container">
+                {% if messages %}
+                    <div class="message-stack">
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags|default:'info' }}">
+                                <div>{{ message }}</div>
+                                <button type="button" class="alert-close" data-alert-close aria-label="Yopish">&times;</button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% block content %}{% endblock content %}
+            </div>
+        </main>
+
+        <footer class="site-footer">
+            <div class="container footer-inner">
+                <div>
+                    <strong>Jonibek;s Blog</strong>
+                    <p>Turli mavzulardagi maqolalarni o'qish va kuzatib borish uchun blog sahifasi.</p>
+                </div>
+                <div class="footer-links">
+                    <a href="{% url 'home' %}">Bosh sahifa</a>
+                    <a href="{% url 'list' %}">Maqolalar</a>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'password_change' %}">Xavfsizlik</a>
+                    {% else %}
+                        <a href="{% url 'login' %}">Kirish</a>
+                    {% endif %}
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="{% static 'js/app.js' %}?v=20260421-3"></script>
+    {% block extrascript %}{% endblock extrascript %}
+</body>
+</html>

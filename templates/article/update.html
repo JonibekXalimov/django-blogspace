@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Postni tahrirlash | BlogSpace{% endblock title %}
+
+{% block content %}
+<section class="form-page">
+    <div class="form-page-copy">
+        <span class="eyebrow">Maqola</span>
+        <h1>Postni tahrirlash</h1>
+        <p>Mavjud post ma'lumotlarini yangilang va saqlang.</p>
+    </div>
+
+    <div class="form-panel">
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            {{ form.media }}
+            {% include 'includes/form_fields.html' %}
+            <div class="form-actions">
+                <button class="button button-primary" type="submit">O'zgarishlarni saqlash</button>
+                <a href="{% url 'detail' article.pk %}" class="button button-secondary">Orqaga qaytish</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock content %}

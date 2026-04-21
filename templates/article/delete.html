@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Postni o'chirish | BlogSpace{% endblock title %}
+
+{% block content %}
+<section class="confirm-shell">
+    <div class="confirm-card">
+        <span class="eyebrow">Diqqat</span>
+        <h1>Postni o'chirish</h1>
+        <p><strong>"{{ article.title }}"</strong> nomli postni o'chirmoqchimisiz? Bu amal qaytarilmaydi.</p>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-actions">
+                <button class="button button-danger" type="submit">Ha, o'chirish</button>
+                <a href="{% url 'detail' article.pk %}" class="button button-secondary">Bekor qilish</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock content %}

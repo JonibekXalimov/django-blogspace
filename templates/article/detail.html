@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ article.title }} | BlogSpace{% endblock title %}
+
+{% block content %}
+<section class="detail-layout">
+    <article class="detail-card">
+        <div class="detail-header">
+            <div>
+                <span class="eyebrow">Maqola</span>
+                <h1>{{ article.title }}</h1>
+                <div class="post-meta">
+                    <span class="category-badge">{{ article.get_category_display }}</span>
+                    <span>{{ article.author|title }}</span>
+                    <span>{{ article.date|date:"d M Y, H:i" }}</span>
+                </div>
+            </div>
+            <div class="detail-actions">
+                <a href="{% url 'list' %}" class="button button-secondary">Barcha postlar</a>
+                {% if user == article.author %}
+                    <a href="{% url 'update' article.pk %}" class="button button-secondary">Tahrirlash</a>
+                    <a href="{% url 'delete' article.pk %}" class="button button-danger">O'chirish</a>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if article.photo %}
+            <div class="detail-cover">
+                <img src="{{ article.photo.url }}" alt="{{ article.title }}">
+            </div>
+        {% endif %}
+
+        {% if article.summary %}
+            <div class="summary-banner">
+                <strong>Qisqacha:</strong>
+                <span>{{ article.summary }}</span>
+            </div>
+        {% endif %}
+
+        <div class="rich-text">
+            {{ article.body|safe }}
+        </div>
+    </article>
+
+    <aside class="detail-sidebar">
+        <section class="side-card">
+            <div class="section-head">
+                <h2>So'nggi maqolalar</h2>
+                <a href="{% url 'list' %}" class="text-link">Barchasi</a>
+            </div>
+            <div class="story-list">
+                {% for item in latest_articles %}
+                    <article class="headline-item">
+                        <div class="story-meta">
+                            <span class="category-badge">{{ item.get_category_display }}</span>
+                            <span>{{ item.author|title }}</span>
+                            <span>{{ item.date|date:"d M Y" }}</span>
+                        </div>
+                        <h3><a href="{% url 'detail' item.pk %}">{{ item.title }}</a></h3>
+                    </article>
+                {% empty %}
+                    <div class="empty-inline">
+                        <p>Yana maqolalar shu yerda chiqadi.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    </aside>
+</section>
+
+<section class="comment-shell">
+    <div class="comment-form-card">
+        <div class="section-head">
+            <h2>Izoh qoldirish</h2>
+        </div>
+
+        {% if user.is_authenticated %}
+            <form method="post" class="comment-form" novalidate>
+                {% csrf_token %}
+                {% for hidden in comment_form.hidden_fields %}
+                    {{ hidden }}
+                {% endfor %}
+                <div class="form-field{% if comment_form.comments.errors %} has-error{% endif %}">
+                    <label for="{{ comment_form.comments.id_for_label }}">Izoh</label>
+                    {{ comment_form.comments }}
+                    {% for error in comment_form.comments.errors %}
+                        <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                <div class="form-actions">
+                    <button class="button button-primary" type="submit">Izoh yuborish</button>
+                </div>
+            </form>
+        {% else %}
+            <p class="comment-login-copy">Izoh qoldirish uchun avval tizimga kiring.</p>
+            <div class="form-actions">
+                <a href="{% url 'login' %}?next={{ request.path }}" class="button button-primary">Kirish</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="comment-list-card">
+        <div class="section-head">
+            <h2>Izohlar</h2>
+            <span class="comment-count">{{ comment_list|length }}</span>
+        </div>
+
+        {% if comment_list %}
+            <div class="comment-list">
+                {% for comment in comment_list %}
+                    <article class="comment-card">
+                        <div class="comment-card-header">
+                            <strong>{{ comment.author|title }}</strong>
+                        </div>
+                        <p>{{ comment.comments }}</p>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-inline">
+                <p>Hozircha izohlar mavjud emas. Birinchi bo'lib fikr qoldiring.</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock content %}

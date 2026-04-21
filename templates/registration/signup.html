@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Ro'yxatdan o'tish | BlogSpace{% endblock title %}
+
+{% block content %}
+<section class="auth-shell">
+    <div class="auth-copy">
+        <span class="eyebrow">Ro'yxatdan o'tish</span>
+        <h1>Yangi hisob yarating</h1>
+        <p>Ro'yxatdan o'tib blogdagi yangi maqolalarni kuzatib boring.</p>
+    </div>
+
+    <div class="form-panel auth-panel">
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {% include 'includes/form_fields.html' %}
+            <div class="form-actions">
+                <button class="button button-primary" type="submit">Ro'yxatdan o'tish</button>
+                <a href="{% url 'login' %}" class="button button-secondary">Kirish sahifasi</a>
+            </div>
+        </form>
+        <p class="auth-meta">Avvaldan hisobingiz bormi? <a href="{% url 'login' %}">Kirish</a>.</p>
+    </div>
+</section>
+{% endblock content %}
